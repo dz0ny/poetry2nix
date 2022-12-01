@@ -200,6 +200,7 @@ lib.composeManyExtensions [
         let
           getCargoHash = version: {
             "4.0.0" = "sha256-HvfRLyUhlXVuvxWrtSDKx3rMKJbjvuiMcDY6g+pYFS0=";
+            "4.0.1" = "sha256-lDWX69YENZFMu7pyBmavUZaalGvFqbHSHfkwkzmDQaY=";
           }.${version} or (
             lib.warn "Unknown bcrypt version: '${version}'. Please update getCargoHash." lib.fakeHash
           );
@@ -379,6 +380,8 @@ lib.composeManyExtensions [
             "37.0.2" = "sha256-qvrxvneoBXjP96AnUPyrtfmCnZo+IriHR5HbtWQ5Gk8=";
             "37.0.4" = "sha256-f8r6QclTwkgK20CNe9i65ZOqvSUeDc4Emv6BFBhh1hI";
             "38.0.1" = "sha256-o8l13fnfEUvUdDasq3LxSPArozRHKVsZfQg9DNR6M6Q=";
+            "38.0.3" = "sha256-lzHLW1N4hZj+nn08NZiPVM/X+SEcIsuZDjEOy0OOkSc=";
+            "38.0.4" = "sha256-BN0kOblUwgHj5QBf52RY2Jx0nBn03lwoN1O5PEohbwY=";
           }.${version} or (
             lib.warn "Unknown cryptography version: '${version}'. Please update getCargoHash." lib.fakeHash
           );
@@ -1386,6 +1389,7 @@ lib.composeManyExtensions [
             "3.7.2" = "sha256-2U37IhftNYjH7sV7Nh51YpR/WjmPmmzX/aGuHsFgwf4=";
             "3.7.9" = "sha256-QHzAhjHgm4XLxY2zUdnIsd/WWMI7dJLQQAvTXC+2asQ=";
             "3.8.0" = "sha256-8k0DetamwLqkdcg8V/D2J5ja6IJSLi50CE+ZjFa7Hdc=";
+            "3.8.1" = "sha256-QXguyDxQHW9Fd3Nhmi5JzSxZQuk3HGPhhh/RGuOTZNY=";
           }.${version} or (
             lib.warn "Unknown orjson version: '${version}'. Please update getCargoHash." lib.fakeHash
           );
@@ -1788,6 +1792,34 @@ lib.composeManyExtensions [
       pyrfr = super.pyrfr.overridePythonAttrs (old: {
         nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.swig ];
       });
+
+      pyscard = super.pyscard.overridePythonAttrs (old:
+        # see https://github.com/NixOS/nixpkgs/blob/93568862a610dc1469dc40b15c1096a9357698ac/pkgs/development/python-modules/pyscard/default.nix
+        let
+          inherit (pkgs) PCSC pcsclite;
+          withApplePCSC = stdenv.isDarwin;
+        in
+        {
+          postPatch =
+            if withApplePCSC then ''
+              substituteInPlace smartcard/scard/winscarddll.c \
+                --replace "/System/Library/Frameworks/PCSC.framework/PCSC" \
+                          "${PCSC}/Library/Frameworks/PCSC.framework/PCSC"
+            '' else ''
+              substituteInPlace smartcard/scard/winscarddll.c \
+                --replace "libpcsclite.so.1" \
+                          "${lib.getLib pcsclite}/lib/libpcsclite${stdenv.hostPlatform.extensions.sharedLibrary}"
+            '';
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ (
+            if withApplePCSC then [ PCSC ] else [ pcsclite ]
+          );
+          NIX_CFLAGS_COMPILE = lib.optionalString (! withApplePCSC)
+            "-I ${lib.getDev pcsclite}/include/PCSC";
+          nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+            pkgs.swig
+          ];
+        }
+      );
 
       pytaglib = super.pytaglib.overridePythonAttrs (old: {
         buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.taglib ];
@@ -2362,6 +2394,7 @@ lib.composeManyExtensions [
         let
           # Watchfiles does not include Cargo.lock in tarball released on PyPi for versions up to 0.17.0
           getRepoHash = version: {
+            "0.18.0" = "sha256-biGGn0YAUbSO1hCJ4kU0ZWlqlXl/HRrBS3iIA3myRI8=";
             "0.17.0" = "1swpf265h9qq30cx55iy6jjirba3wml16wzb68k527ynrxr7hvqx";
             "0.16.1" = "1ss6gzcr6js2d2sddgz1p52gyiwpqmgrxm8r6wim7gnm4wvhav8a";
             "0.15.0" = "14k3avrj7v794kk4mk2xggn40a4s0zg8iq8wmyyyrf7va6hz29hf";
@@ -2381,6 +2414,13 @@ lib.composeManyExtensions [
             rev = "v${old.version}";
             inherit sha256;
           };
+          patchPhase = builtins.concatStringsSep "\n" [
+            (old.patchPhase or "")
+            ''
+              substituteInPlace "Cargo.lock" --replace 'version = "0.0.0"' 'version = "${old.version}"'
+              substituteInPlace "Cargo.toml" --replace 'version = "0.0.0"' 'version = "${old.version}"'
+            ''
+          ];
           cargoDeps = pkgs.rustPlatform.importCargoLock {
             lockFile = "${src.out}/Cargo.lock";
           };
