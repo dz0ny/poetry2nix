@@ -476,7 +476,139 @@ lib.composeManyExtensions [
       dcli = super.dcli.overridePythonAttrs (old: {
         propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
       });
-
+pyramid-redirect = super.pyramid-redirect.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      pyramid-tm = super.pyramid-tm.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      zope-sqlalchemy = super.zope-sqlalchemy.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      pyramid-retry = super.pyramid-retry.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      pyramid-force-https = super.pyramid-force-https.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      expandvars = super.expandvars.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      pyramid-jwt = super.pyramid-jwt.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      flake8-super-call = super.flake8-super-call.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      pytest-splinter = super.pytest-splinter.overrideAttrs (
+        old: {
+          postInstall = old.postInstall or "" + ''
+            rm -f $out/${super.python.sitePackages}/pytest_splinter/profiles/firefox/.marker
+          '';
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      flake8-tuple = super.flake8-tuple.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      flake8-mock = super.flake8-mock.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      flake8-ensure-ascii = super.flake8-ensure-ascii.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      flake8-plone-hasattr = super.flake8-plone-hasattr.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      flake8-comprehensions = super.flake8-comprehensions.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      flake8-deprecated = super.flake8-deprecated.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      flake8-builtins = super.flake8-builtins.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      pytest-bdd = super.pytest-bdd.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.poetry ];
+        }
+      );
+      mixpanel = super.mixpanel.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      customerio = super.customerio.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      cloudinary = super.cloudinary.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      pyrepl = super.pyrepl.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      wmctrl = super.wmctrl.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      urllib3-secure-extra = super.urllib3-secure-extra.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.flit-core ];
+        }
+      );
+      typecov = super.typecov.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      rdbms-subsetter = super.rdbms-subsetter.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.setuptools ];
+        }
+      );
+      autoflake = super.autoflake.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ self.hatchling ];
+        }
+      );
       ddtrace = super.ddtrace.overridePythonAttrs (old: {
         buildInputs = (old.buildInputs or [ ]) ++
           (lib.optionals pkgs.stdenv.isDarwin [ pkgs.darwin.IOKit ]);
